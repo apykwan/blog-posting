@@ -1,0 +1,52 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
+use App\Models\User;
+
+class UserController extends Controller
+{
+    public function showCorrectHomepage()
+    {
+        if (Auth::check()) {
+            return view('homepage-feed');
+        } 
+
+        return view('homepage');
+    }
+    public function register(Request $request) 
+    {
+        $incomingFields = $request->validate([
+            'username' => ['required', 'min:3', 'max:20', Rule::unique('users', 'username')],
+            'email' => ['required', 'email', Rule::unique('users', 'email')],
+            'password' => ['required', 'min:4', 'confirmed']
+        ]);
+
+        User::create($incomingFields);
+
+        return 'Hello from register function';  
+    }
+
+    public function login(Request $request) 
+    {
+        $incomingFields = $request->validate([
+            'loginusername' => 'required',
+            'loginpassword' => 'required'
+        ]);
+
+        $fields = [
+            'username' => $incomingFields['loginusername'],
+            'password' => $incomingFields['loginpassword']
+        ];
+
+        if (Auth::attempt($fields)) {
+            $request->session()->regenerate();
+            return 'Congrats!';
+        }
+
+        return 'Sorry';
+    }
+}
