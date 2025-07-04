@@ -25,9 +25,10 @@ class UserController extends Controller
             'password' => ['required', 'min:4', 'confirmed']
         ]);
 
-        User::create($incomingFields);
+        $user = User::create($incomingFields);
+        Auth::login($user);
 
-        return 'Hello from register function';  
+        return redirect('/')->with('success', 'Thank you for registering.');
     }
 
     public function login(Request $request) 
@@ -44,9 +45,15 @@ class UserController extends Controller
 
         if (Auth::attempt($fields)) {
             $request->session()->regenerate();
-            return 'Congrats!';
+            return redirect('/')->with('success', 'You have successfully logged in.');
         }
 
-        return 'Sorry';
+        return redirect('/')->with('failure', 'Invalid login.');
+    }
+
+    public function logout() {
+        Auth::logout();
+
+        return redirect('/')->with('success', 'You are now logged out.');
     }
 }
