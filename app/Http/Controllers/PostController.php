@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\{User, Post};
 
 class PostController extends Controller {
   public function showCreateForm() 
   {
+    if (!Auth::check()) {
+      return redirect('/');
+    }
     return view('create-post');
   }
 
@@ -31,8 +35,7 @@ class PostController extends Controller {
 
   public function viewSinglePost(Post $post)
   {
-    $username = User::find($post->user_id)->username;
-
-    return view('single-post', ['post' => $post, 'username' => $username]);
+    $post->body = strip_tags(Str::markdown($post->body));
+    return view('single-post', ['post' => $post]);
   }
 }

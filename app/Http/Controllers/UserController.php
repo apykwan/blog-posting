@@ -43,7 +43,7 @@ class UserController extends Controller
             'password' => $incomingFields['loginpassword']
         ];
 
-        if (Auth::attempt($fields)) {
+        if (Auth::attempt($fields, true)) {
             $request->session()->regenerate();
             return redirect('/')->with('success', 'You have successfully logged in.');
         }
