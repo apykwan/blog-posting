@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
-use App\Models\{User, Post};
+use App\Models\Post;
 
 class PostController extends Controller {
   public function showCreateForm() 
@@ -37,5 +37,15 @@ class PostController extends Controller {
   {
     $post->body = strip_tags(Str::markdown($post->body));
     return view('single-post', ['post' => $post]);
+  }
+
+  public function delete(Post $post)
+  {
+    if(!Auth::user()->can('delete', $post)) {
+      return 'You cannot do that';
+    }
+
+    $post->delete();
+    return redirect('/profile/' . Auth::user()->username)->with('success', 'Post successfully deleted.');
   }
 }

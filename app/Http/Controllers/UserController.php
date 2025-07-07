@@ -56,4 +56,13 @@ class UserController extends Controller
 
         return redirect('/')->with('success', 'You are now logged out.');
     }
+    
+    public function profile(User $user)
+    {
+        return view('profile-posts', [
+            'username' => $user->username,
+            'posts' => $user->posts()->get(),
+            'postCount' => $user->posts()->count()
+        ]);
+    }
 }
