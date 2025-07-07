@@ -33,6 +33,26 @@ class PostController extends Controller {
     return redirect("/post/{$newPost->id}")->with('success', 'New post created!');
   }
 
+  public function showEditForm(Post $post)
+  {
+    return view('edit-post', ['post' => $post]);
+  }
+
+  public function actuallyUpdate(Post $post, Request $request)
+  {
+    $incomingFields = $request->validate([
+      'title' => 'required',
+      'body' => 'required'
+    ]);
+
+    $incomingFields['title'] = strip_tags($incomingFields['title']);
+    $incomingFields['body'] = strip_tags($incomingFields['body']);
+
+    $post->update($incomingFields);
+
+    return back()->with('success', 'Post successfully updated');
+  }
+
   public function viewSinglePost(Post $post)
   {
     $post->body = strip_tags(Str::markdown($post->body));
