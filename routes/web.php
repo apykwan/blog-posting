@@ -12,10 +12,15 @@ Route::get('/debug-session', function () {
   ];
 });
 
+Route::get('/admin-only', function() {
+  return 'Only admins should be to see this page';
+})->middleware('can:visitAdminPages');
+
 Route::get('/', [UserController::class, 'showCorrectHomepage'])->name('login');
 Route::post('/register', [UserController::class, 'register'])->name('guest');
 Route::post('/login', [UserController::class, 'login'])->name('guest');
 Route::post('/logout', [UserController::class, 'logout'])->middleware('mustBeLoggedIn');
+Route::get('/manage-avatar', [UserController::class, 'showAvatarForm']);
 
 Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');
 Route::post('/create-post', [PostController::class, 'storeNewPost'])->middleware('mustBeLoggedIn');
