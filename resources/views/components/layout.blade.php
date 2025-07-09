@@ -22,7 +22,7 @@
           <a href="#" class="text-white mr-2 header-search-icon" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-search"></i></a>
           <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span>
           <a href="/profile/{{Auth::user()->username}}" class="mr-2">
-            <img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="/storage/avatars/{{Auth::user()->avatar}}" />
+            <img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="{{Auth::user()->avatar}}" />
           </a>
           <a href="/create-post" class="btn btn-sm btn-success mr-2">Create Post</a>
           <form action="/logout" method="POST" class="d-inline">

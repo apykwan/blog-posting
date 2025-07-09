@@ -63,6 +63,7 @@ class UserController extends Controller
     public function profile(User $user)
     {
         return view('profile-posts', [
+            'avatar' => $user->avatar,
             'username' => $user->username,
             'posts' => $user->posts()->get(),
             'postCount' => $user->posts()->count()
@@ -89,8 +90,16 @@ class UserController extends Controller
             $user = Auth::user();
             $filename =  $user->id . "-" . uniqid() . ".jpg";
             Storage::disk('public')->put('avatars/' . $filename, $imgData);
+
+            $oldAvatar = $user->avatar;
+
             $user->avatar = $filename;
             $user->save();
+
+            if ($oldAvatar && $oldAvatar != '/fallback-avatar.jpg') {
+                $relativePath = str_replace(asset('storage/'), '', $oldAvatar);
+                Storage::disk('public')->delete($relativePath);
+            }
 
             return redirect('/profile/john')->with('success', 'Avatar updated.');
         }
