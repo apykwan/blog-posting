@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 
 class UserController extends Controller
@@ -69,5 +72,28 @@ class UserController extends Controller
     public function showAvatarForm(User $user)
     {
         return view('avatar-form');
+    }
+
+    public function storeAvatarForm(Request $request) 
+    {
+        if ($request->hasFile('avatar')) {
+            $request->validate([
+                'avatar' => 'required|image|image:5000'
+            ]);
+
+            // $request->file('avatar')->store('avatars', 'public');
+            $manager = new ImageManager(new Driver());
+            $image = $manager->read($request->file('avatar'));
+            $imgData = $image->cover(120, 120)->toJpeg();
+
+            $user = Auth::user();
+            $filename =  $user->id . "-" . uniqid() . ".jpg";
+            Storage::disk('public')->put('avatars/' . $filename, $imgData);
+            $user->avatar = $filename;
+            $user->save();
+
+            return redirect('/profile/john')->with('success', 'Avatar updated.');
+        }
+        return redirect('/manage-avatar')->with('failure', 'Avatar update failed.');
     }
 }
