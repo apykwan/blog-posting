@@ -66,7 +66,8 @@ class UserController extends Controller
             'avatar' => $user->avatar,
             'username' => $user->username,
             'posts' => $user->posts()->get(),
-            'postCount' => $user->posts()->count()
+            'postCount' => $user->posts()->count(),
+            'userId' => $user->id
         ]);
     }
 
