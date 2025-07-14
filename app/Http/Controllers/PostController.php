@@ -9,6 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
 
 class PostController extends Controller {
+  public function search($term)
+  {
+    return Post::search($term)
+      ->get()
+      ->load('user:id,username,avatar');
+  }
+
   public function showCreateForm() 
   {
     if (!Auth::check()) {
