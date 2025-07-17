@@ -43,12 +43,16 @@ Route::get('/profile/{user:username}/following', [UserController::class, 'profil
 
 Route::post('/send-chat-message', function (Request $request) {
   $formFields = $request->validate([
-    'textvalue' => 'required'
+    'textvalue' =>  ['required', 'string']
   ]);
 
   if (!trim(strip_tags($formFields['textvalue']))) {
     return response()->json(["validated" => false]);
   }
 
-  return response()->json(["validated" => true]);
+  return response()->json([
+    "validated" => true,
+    "avatar" => Auth::user()->avatar,
+    "username" => Auth::user()->username
+  ]);
 })->middleware('mustBeLoggedIn');

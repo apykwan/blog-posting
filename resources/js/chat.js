@@ -13,6 +13,7 @@ export default class Chat {
     this.closeIcon = document.querySelector(".chat-title-bar-close")
     this.socket = null
     this.events()
+    this.username = ''
   }
 
   // Events
@@ -34,16 +35,18 @@ export default class Chat {
       const { data } = await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: message
       },  { withCredentials: true })
+      const { validated, username, avatar } = data;
 
-      if (data.validated) {
-        // Use this.socket, not socket
+      if (validated && username && avatar) {
+        this.username = username
+
         this.socket.emit("chatMessage", {
-          username: window.currentUser.username,
-          avatar: window.currentUser.avatar,
+          username: username,
+          avatar: avatar,
           textvalue: message
         })
       } else {
-        alert(data.message || 'Validation failed.')
+        alert(message || 'Validation failed.')
       }
     } catch (err) {
       console.log(err);
@@ -73,8 +76,9 @@ export default class Chat {
       this.displayMessageFromServer(data)
     })
   }
+  
   displayMessageFromServer(data) {
-    const isSelf = data.username === window.currentUser.username
+    const isSelf = data.username === this.username
 
     const messageHTML = isSelf
       ? `
@@ -94,7 +98,6 @@ export default class Chat {
           </div></div>
         </div>
       `
-
     this.chatLog.insertAdjacentHTML("beforeend", DOMPurify.sanitize(messageHTML))
     this.chatLog.scrollTop = this.chatLog.scrollHeight
   }

@@ -97,13 +97,6 @@
       $('[data-toggle="tooltip"]').tooltip()
 
       document.getElementById('year').textContent = new Date().getFullYear()
-
-      @if (Auth::check())
-      window.currentUser = {
-        username: @json(Auth::user()->username),
-        avatar: @json(Auth::user()->avatar)
-      }
-      @endif
     </script>
   </body>
 </html>
