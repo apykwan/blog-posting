@@ -26,16 +26,28 @@ export default class Chat {
   }
 
   // Methods
-  sendMessageToServer() {
+  async sendMessageToServer() {
     const message = this.chatField.value.trim()
     if (!message) return
 
-    // Use this.socket, not socket
-    this.socket.emit("chatMessage", {
-      username: window.currentUser.username,
-      avatar: window.currentUser.avatar,
-      textvalue: message
-    })
+    try {
+      const { data } = await axios.post('http://localhost:8000/send-chat-message', {
+        textvalue: message
+      },  { withCredentials: true })
+
+      if (data.validated) {
+        // Use this.socket, not socket
+        this.socket.emit("chatMessage", {
+          username: window.currentUser.username,
+          avatar: window.currentUser.avatar,
+          textvalue: message
+        })
+      } else {
+        alert(data.message || 'Validation failed.')
+      }
+    } catch (err) {
+      console.log(err);
+    }
 
     this.chatField.value = ""
     this.chatField.focus()
@@ -55,7 +67,7 @@ export default class Chat {
   }
 
   openConnection() {
-    this.socket = io('http://localhost:5001')
+    this.socket = io(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}`)
 
     this.socket.on('chatMessage', (data) => {
       this.displayMessageFromServer(data)
@@ -64,7 +76,7 @@ export default class Chat {
   displayMessageFromServer(data) {
     const isSelf = data.username === window.currentUser.username
 
-    const messageHTML = data.username === window.currentUser.username
+    const messageHTML = isSelf
       ? `
         <div class="chat-self">
           <div class="chat-message">
@@ -85,7 +97,6 @@ export default class Chat {
 
     this.chatLog.insertAdjacentHTML("beforeend", DOMPurify.sanitize(messageHTML))
     this.chatLog.scrollTop = this.chatLog.scrollHeight
-
   }
 
   injectHTML() {
