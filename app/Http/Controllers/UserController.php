@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\{User, Follow};
+use App\Events\OurExampleEvent;
 
 class UserController extends Controller
 {
@@ -49,6 +50,10 @@ class UserController extends Controller
 
         if (Auth::attempt($fields, true)) {
             $request->session()->regenerate();
+            event(new OurExampleEvent([
+                'username' => Auth::user()->username,
+                'action' => 'login'
+            ]));
             return redirect('/')->with('success', 'You have successfully logged in.');
         }
 
@@ -56,8 +61,14 @@ class UserController extends Controller
     }
 
     public function logout() {
-        Auth::logout();
-
+        if (Auth::check()) {
+            event(new OurExampleEvent([
+                'username' => Auth::user()->username,
+                'action' => 'logout'
+            ]));
+            Auth::logout();
+        }
+            
         return redirect('/')->with('success', 'You are now logged out.');
     }
 

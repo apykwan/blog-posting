@@ -2,7 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 use App\Http\Controllers\{UserController, PostController, FollowController};
+use App\events\ChatMessage;
+use Illuminate\Support\Facades\Log;
 
 Route::get('/debug-session', function () {
   return [
@@ -37,3 +40,63 @@ Route::get('/search/{term}', [PostController::class, 'search']);
 Route::get('/profile/{user:username}', [UserController::class, 'profile']);
 Route::get('/profile/{user:username}/followers', [UserController::class, 'profileFollowers']);
 Route::get('/profile/{user:username}/following', [UserController::class, 'profileFollowing']);
+
+// Route::post('/send-chat-message', function (Request $request) {
+//   $formFields = $request->validate([
+//     'textvalue' => 'required'
+//   ]);
+
+//   if (!trim(strip_tags($formFields['textvalue']))) {
+//     return response()->noContent();
+//   }
+
+//   Log::info('Send chat message called', ['text' => $request->textvalue]);
+
+  // broadcast(new ChatMessage([
+  //   'username' => Auth::user()->username, 
+  //   'textvalue' => strip_tags($request->textvalue), 
+  //   'avatar' => Auth::user()->avatar])
+  // )->toOthers();
+//   return response()->noContent();
+// })->middleware('mustBeLoggedIn');
+
+
+Route::post('/send-chat-message', function (Request $request) {
+  $formFields = $request->validate([
+    'textvalue' => 'required'
+  ]);
+
+  if (!trim(strip_tags($formFields['textvalue']))) {
+    return response()->noContent();
+  }
+
+  $data = [
+    'username' => Auth::user()->username,
+    'textvalue' => strip_tags($request->textvalue),
+    'avatar' => Auth::user()->avatar
+  ];
+
+  $port = env('NODE_SERVER_PORT', 5001);
+  $ch = curl_init("http://localhost:{$port}/send-chat-message");
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  $response = curl_exec($ch);
+
+  if ($response === false) {
+    return response()->json(['error' => curl_error($ch)], 500);
+  }
+
+  curl_close($ch);
+  return response()->json(['status' => 'Message sent', 'node_response' => $response]);
+})->middleware('mustBeLoggedIn');
+
+Route::get('/test-broadcast', function () {
+  event(new ChatMessage([
+    'username' => 'TestUser',
+    'avatar' => 'https://example.com/avatar.png',
+    'textvalue' => 'Hello from test route!',
+  ]));
+
+  return 'Broadcast event fired';
+});
