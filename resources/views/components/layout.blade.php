@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    @viteReactRefresh
     <title>
       @isset($doctitle)
       {{$doctitle}} | Lara Post
@@ -19,7 +20,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet" />
     <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     @vite(['resources/css/app.css'])
-    @vite(['resources/js/app.js'])
   </head>
   <body>
     <header class="header-bar mb-3">
@@ -27,7 +27,10 @@
         <h4 class="my-0 mr-md-auto font-weight-normal"><a href="/" class="text-white">Lara Post</a></h4>
 
         @auth
-        <div class="flex-row my-3 my-md-0">
+        <div class="flex-row flex-wrap my-3 my-md-0">
+         
+          <div id="react-search"></div>
+          
           <a href="#" class="text-white mr-2 header-search-icon" title="Search" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-search"></i></a>
           <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span>
           <a href="/profile/{{Auth::user()->username}}" class="mr-2">
@@ -90,6 +93,7 @@
     ></div> 
     @endauth
 
+    @vite(['resources/js/app.jsx'])
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
