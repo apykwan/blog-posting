@@ -27,7 +27,7 @@
         <h4 class="my-0 mr-md-auto font-weight-normal"><a href="/" class="text-white">Lara Post</a></h4>
 
         @auth
-        <div class="flex-row flex-wrap my-3 my-md-0">
+        <div class="d-flex flex-row flex-nowrap align-items-center gap-2">
          
           <div id="react-search"></div>
           

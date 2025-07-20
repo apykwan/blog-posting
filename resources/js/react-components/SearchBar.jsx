@@ -12,20 +12,23 @@ export default function SearchBar() {
     const searchTimer = setTimeout(async () => {
       const { data } = await axios(`http://localhost:8000/search/${searchTerm}`);
       setPosts(data);
-    }, 900);
+    }, 750);
 
-    () => clearTimeout(searchTimer);
+   return () => clearTimeout(searchTimer);
   }, [searchTerm]);
 
   return (
-    <>
-      <input type="text" onChange={(e) => setSearchTerm(e.target.value)} />
+    <div className="d-flex align-items-center" style={{ height: "50px" }}>
+      <input
+          className=""
+          type="text"
+          onChange={(e) => setSearchTerm(e.target.value)}
+      />
 
       <ul>
-        {posts.length > 0 && posts.map(post => (
-          <li key={post.title}>{post.title}</li>
-        ))}
-      </ul> 
-    </>
+          {posts.length > 0 &&
+              posts.map((post) => <li key={post.title}>{post.title}</li>)}
+      </ul>
+    </div>
   );
 }
