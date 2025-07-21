@@ -20,14 +20,14 @@ export default function SearchBar() {
   return (
     <div className="d-flex align-items-center" style={{ height: "50px" }}>
       <input
-          className=""
-          type="text"
-          onChange={(e) => setSearchTerm(e.target.value)}
+        className=""
+        type="text"
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
 
       <ul>
-          {posts.length > 0 &&
-              posts.map((post) => <li key={post.title}>{post.title}</li>)}
+        {posts.length > 0 &&
+          posts.map((post) => <li key={post.title}>{post.title}</li>)}
       </ul>
     </div>
   );
