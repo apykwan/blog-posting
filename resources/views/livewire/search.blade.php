@@ -1,6 +1,6 @@
 <div x-data="{ isOpen: false }">
     <button
-        x-on:click="isOpen = true; setTimeout(() => document.querySelector('#live-search-field').focus(), 50)"
+        x-on:click="isOpen = true; setTimeout(() => document.querySelector('#live-search-field').focus(), 50);"
         style="background: none; border: none; padding: 0; margin: 0; outline: none; cursorpointer;" 
         class="text-white mr-2 header-search-icon" 
         title="Search" 
@@ -61,13 +61,4 @@
             </div>
         </div>
     </div>
-    {{-- <input type="text" wire:model.live="searchTerm" placeholder="...search"/>
-
-    @if (count($results) > 0)
-    <ul>
-        @foreach($results as $post)
-        <li>{{$post->title}}</li>
-        @endforeach
-    </ul>
-    @endif --}}
 </div>
