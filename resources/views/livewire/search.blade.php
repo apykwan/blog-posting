@@ -1,7 +1,7 @@
 <div x-data="{ isOpen: false }">
     <button
         x-on:click="isOpen = true; setTimeout(() => document.querySelector('#live-search-field').focus(), 50);"
-        style="background: none; border: none; padding: 0; margin: 0; outline: none; cursorpointer;" 
+        style="background: none; border: none; padding: 0; margin: 0; outline: none; cursor: pointer;" 
         class="text-white mr-2 header-search-icon" 
         title="Search" 
         data-toggle="tooltip" 

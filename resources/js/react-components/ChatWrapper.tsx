@@ -1,4 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react'
+import axios from 'axios'
 import { io } from 'socket.io-client'
 
 export default function ChatWrapper ({ username, avatar }) {
@@ -11,17 +12,15 @@ export default function ChatWrapper ({ username, avatar }) {
   const visible = isOpen ? 'chat--visible' : ''
 
   const handleChange = (e) => setInput(e.target.value)
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     if (socketRef.current) {
 
-      const inputFields = {
-        username,
-        avatar,
+      const { data } = await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: input
-      }
+      },  { withCredentials: true })
 
-      socketRef.current.emit('chatMessage', inputFields)
+      console.log(data)
       setInput('')
     }
   }
@@ -89,10 +88,10 @@ export default function ChatWrapper ({ username, avatar }) {
       </div>
       <div className="chat-log" ref={chatLogRef}>
          {messages && messages.length > 0 && messages.map((message, idx) => (
-        <div key={`${message.username}-${idx}`}>
-          {displayMessageFromServer(message)}
-        </div>
-      ))}
+          <div key={`${message.username}-${idx}`}>
+            {displayMessageFromServer(message)}
+          </div>
+        ))}
       </div>
        
       <form className="chat-form border-top" onSubmit={handleSubmit}>

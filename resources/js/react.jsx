@@ -1,4 +1,4 @@
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 
 import SearchBar from "./react-components/SearchBar";
 import ChatBtn from './react-components/ChatBtn';
@@ -9,14 +9,14 @@ import ChatWrapper from './react-components/ChatWrapper';
 // root.render(<SearchBar />);
 
 const chatBtn = document.getElementById("react-chat-btn")
-if (chatBtn) ReactDOM.createRoot(chatBtn).render(<ChatBtn />)
+if (chatBtn) createRoot(chatBtn).render(<ChatBtn />)
 
 const wrapper = document.getElementById("react-chat-wrapper")
 if (wrapper) {
   const username = wrapper.dataset.username
   const avatar = wrapper.dataset.avatar
 
-  ReactDOM.createRoot(document.getElementById("react-chat-root")).render(
+  createRoot(document.getElementById("react-chat-root")).render(
     <ChatWrapper username={username} avatar={avatar} />
   );
 }

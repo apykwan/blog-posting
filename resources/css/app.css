@@ -282,8 +282,8 @@ textarea.tall-textarea {
 .chat-wrapper {
   position: fixed;
   z-index: 5;
-  bottom: 0;
-  right: 20px;
+  bottom: 25px;
+  right: 25px;
   width: 290px;
   height: 350px;
   background-color: #fff;
