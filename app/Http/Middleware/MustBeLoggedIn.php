@@ -18,6 +18,14 @@ class MustBeLoggedIn
     {
         if (Auth::check()) return $next($request);
 
+        // If request expects JSON (e.g. axios, fetch), return JSON error response
+        if ($request->expectsJson()) {
+            return response()->json([
+                'validated' => false,
+                'message' => 'You must be logged in.'
+            ], 401);
+        }
+
         return redirect('/')->with('failure', 'You must be logged in.');
     }
 }

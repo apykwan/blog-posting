@@ -14,7 +14,7 @@
         <div class="container container--narrow">
             <label for="live-search-field" class="search-overlay-icon"><i class="fas fa-search"></i></label>
             <input
-                x-on:keydown="document.querySelector('.circle-loader').classList.add('circle-loader--visible'); if (document.querySelector('#no-results') {document.querySelector('#no-results').style.display = 'none'})"
+                x-on:keydown="document.querySelector('.circle-loader').classList.add('circle-loader--visible'); if (document.querySelector('#no-results')) { document.querySelector('#no-results').style.display = 'none'; }"
                 wire:model.live.debounce.750="searchTerm" 
                 autocomplete="off" 
                 type="text" 

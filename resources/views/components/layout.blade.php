@@ -32,8 +32,16 @@
       
           {{-- <div id="react-search"></div> --}}
           <livewire:search />
-          <livewire:chat />
-           
+          
+          <div
+            id="react-chat-btn" 
+            class="text-white mr-2 header-chat-icon" 
+            title="Chat" 
+            data-toggle="tooltip" 
+            data-placement="bottom"
+          ></div>
+
+          {{-- <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span> --}}
           <a href="/profile/{{Auth::user()->username}}" class="mr-2">
             <img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="{{Auth::user()->avatar}}" />
           </a>
@@ -84,6 +92,22 @@
     <footer class="border-top text-center small text-muted py-3">
       <p class="m-0">Copyright &copy; <span id="year"></span> <a href="/" class="text-muted">Lara Post</a>. All rights reserved.</p>
     </footer>
+
+    @auth
+    <div 
+      data-username="{{ Auth::user()->username }}"
+      data-avatar="{{ Auth::user()->avatar }}" 
+      id="react-chat-wrapper" 
+    >
+      <div id="react-chat-root"></div>
+    </div>
+    {{-- <div 
+      data-username="{{Auth::user()->username}}"
+      data-avatar="{{Auth::user()->avatar}}" 
+      id="chat-wrapper" 
+      class="chat-wrapper shadow border-top border-left border-right"
+    ></div>  --}}
+    @endauth
 
     @livewireScripts
     @vite(['resources/js/app.js'])

@@ -35,11 +35,15 @@ io.on('connection', (socket) => {
 app.post('/send-chat-message', (req, res) => {
   const data = req.body;
 
+  
+
   if (
     typeof data.username === 'string' && data.username.trim() !== '' &&
     typeof data.avatar === 'string' && data.avatar.trim() !== '' &&
     typeof data.textvalue === 'string' && data.textvalue.trim() !== ''
   ) {
+
+    console.log('receiving data', data);
     io.emit('chatMessage', data);
     return res.json({ status: 'Message broadcasted' })
   }

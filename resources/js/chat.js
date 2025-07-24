@@ -5,6 +5,7 @@ export default class Chat {
     this.openedYet = false
     this.chatWrapper = document.querySelector("#chat-wrapper")
     this.avatar = document.querySelector("#chat-wrapper").dataset.avatar
+    this.username = document.querySelector("#chat-wrapper").dataset.username || '';
     this.openIcon = document.querySelector(".header-chat-icon")
     this.injectHTML()
     this.chatLog = document.querySelector("#chat")
@@ -13,7 +14,6 @@ export default class Chat {
     this.closeIcon = document.querySelector(".chat-title-bar-close")
     this.socket = null
     this.events()
-    this.username = ''
   }
 
   // Events
@@ -35,19 +35,8 @@ export default class Chat {
       const { data } = await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: message
       },  { withCredentials: true })
-      const { validated, username, avatar } = data;
 
-      if (validated && username && avatar) {
-        this.username = username
-
-        this.socket.emit("chatMessage", {
-          username: username,
-          avatar: avatar,
-          textvalue: message
-        })
-      } else {
-        alert(message || 'Validation failed.')
-      }
+      if (!data.success) console.error('Something wrong');
     } catch (err) {
       console.log(err);
     }
@@ -61,9 +50,8 @@ export default class Chat {
   }
 
   showChat() {
-    if (!this.openedYet) {
-      this.openConnection()
-    }
+    if (!this.openedYet) this.openConnection()
+
     this.openedYet = true
     this.chatWrapper.classList.add("chat--visible")
     this.chatField.focus()
@@ -92,10 +80,12 @@ export default class Chat {
       : `
         <div class="chat-other">
           <a href="/profile/${data.username}"><img class="avatar-tiny" src="${data.avatar}"></a>
-          <div class="chat-message"><div class="chat-message-inner">
-            <a href="/profile/${data.username}"><strong>${data.username}:</strong></a>
-            ${data.textvalue}
-          </div></div>
+          <div class="chat-message">
+            <div class="chat-message-inner">
+              <a href="/profile/${data.username}"><strong>${data.username}:</strong></a>
+              ${data.textvalue}
+            </div>
+          </div>
         </div>
       `
     this.chatLog.insertAdjacentHTML("beforeend", DOMPurify.sanitize(messageHTML))
@@ -105,12 +95,14 @@ export default class Chat {
   injectHTML() {
     this.chatWrapper.classList.add("chat-wrapper--ready")
     this.chatWrapper.innerHTML = `
-    <div class="chat-title-bar">Chat <span class="chat-title-bar-close"><i class="fas fa-times-circle"></i></span></div>
-    <div id="chat" class="chat-log"></div>
-    
-    <form id="chatForm" class="chat-form border-top">
-      <input type="text" class="chat-field" id="chatField" placeholder="Type a message…" autocomplete="off">
-    </form>
+      <div class="chat-title-bar">
+        Chat <span class="chat-title-bar-close"><i class="fas fa-times-circle"></i></span>
+      </div>
+      <div id="chat" class="chat-log"></div>
+      
+      <form id="chatForm" class="chat-form border-top">
+        <input type="text" class="chat-field" id="chatField" placeholder="Type a message…" autocomplete="off">
+      </form>
     `
   }
 }

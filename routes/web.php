@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{UserController, PostController, FollowController};
 use Illuminate\Support\Facades\Log;
@@ -42,16 +43,28 @@ Route::get('/profile/{user:username}/following', [UserController::class, 'profil
 
 Route::post('/send-chat-message', function (Request $request) {
   $formFields = $request->validate([
-    'textvalue' =>  ['required', 'string']
+    'textvalue' => ['required', 'string']
   ]);
 
   if (!trim(strip_tags($formFields['textvalue']))) {
     return response()->json(["validated" => false]);
   }
 
-  return response()->json([
-    "validated" => true,
-    "avatar" => Auth::user()->avatar,
-    "username" => Auth::user()->username
-  ]);
+  try {
+    $data = [
+      "avatar" => Auth::user()->avatar,
+      "username" => Auth::user()->username,
+      "textvalue" => $formFields['textvalue']
+    ];
+
+    $response = Http::post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/send-chat-message', $data);
+
+    if ($response->failed()) {
+      Log::error('Failed to send message to socket server:', ['error' => $response->json()]);
+    }
+  } catch (\Exception $e) {
+    Log::error('Exception while sending message to socket server:', ['error' => $e->getMessage()]);
+  }
+
+  return response()->json(['success' => true]);
 })->middleware('mustBeLoggedIn');
