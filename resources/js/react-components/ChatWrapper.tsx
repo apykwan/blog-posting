@@ -2,8 +2,10 @@ import { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { io } from 'socket.io-client'
 
+import usePersistedState from '../react-hooks/usePersistedState';
+
 export default function ChatWrapper ({ username }) {
-  const [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = usePersistedState('chatModalOpen', false);
   const [messages, setMessages] = useState([]) 
   const [input, setInput] = useState('')
   const socketRef = useRef(null)
@@ -15,7 +17,7 @@ export default function ChatWrapper ({ username }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (socketRef.current) {
-      const { data } = await axios.post('http://localhost:8000/send-chat-message', {
+      await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: input
       },  { withCredentials: true })
 
@@ -23,10 +25,7 @@ export default function ChatWrapper ({ username }) {
     }
   }
 
-  const handleCloseBtn = () => {
-    setIsOpen(false)
-    localStorage.setItem('chatModalOpen', 'false')
-  }
+  const handleCloseBtn = () => setIsOpen(false)
 
   const displayMessageFromServer = (data) => {
     return data.username === username ? 
@@ -53,9 +52,10 @@ export default function ChatWrapper ({ username }) {
   useEffect(() => {
     async function fetchMessages() {
       const { data } = await axios(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}/get-chat-messages`)
-      if (messages.length === 0) setMessages(data);
+       setMessages(data);
     }
-    fetchMessages()
+
+    if (messages.length === 0) fetchMessages()
   }, [])
   
   useEffect(() => {

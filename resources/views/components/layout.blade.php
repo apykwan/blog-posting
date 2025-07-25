@@ -31,8 +31,8 @@
         <div class="d-flex flex-row flex-nowrap align-items-center gap-2">
       
           {{-- <div id="react-search"></div> --}}
+   
           <livewire:search />
-          
           <div id="react-chat-btn" class="text-white mx-2 header-chat-icon" style="cursor: pointer;"></div>
 
           {{-- <span class="text-white mr-2 header-chat-icon" title="Chat" data-toggle="tooltip" data-placement="bottom"><i class="fas fa-comment"></i></span> --}}

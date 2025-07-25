@@ -45,6 +45,7 @@
                     
                         @foreach($results as $post)
                         <a 
+                            {{-- x-on:click.prevent="isOpen = false; Livewire.navigate('/post/{{$post->id}}')" --}}
                             href="/post/{{$post->id}}" 
                             class="list-group-item list-group-item-action"
                         >
