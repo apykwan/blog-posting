@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { io } from 'socket.io-client'
 
-export default function ChatWrapper ({ username, avatar }) {
+export default function ChatWrapper ({ username }) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState([]) 
   const [input, setInput] = useState('')
@@ -15,14 +15,17 @@ export default function ChatWrapper ({ username, avatar }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (socketRef.current) {
-
       const { data } = await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: input
       },  { withCredentials: true })
 
-      console.log(data)
       setInput('')
     }
+  }
+
+  const handleCloseBtn = () => {
+    setIsOpen(false)
+    localStorage.setItem('chatModalOpen', 'false')
   }
 
   const displayMessageFromServer = (data) => {
@@ -46,16 +49,30 @@ export default function ChatWrapper ({ username, avatar }) {
         </div>
       )
   }
+
+  useEffect(() => {
+    async function fetchMessages() {
+      const { data } = await axios(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}/get-chat-messages`)
+      if (messages.length === 0) setMessages(data);
+    }
+    fetchMessages()
+  }, [])
   
   useEffect(() => {
-    const handleOpen = () => setIsOpen(true)
-    const handleClose = () => setIsOpen(false)
-    window.addEventListener("open-chat", handleOpen)
-    window.addEventListener("close-chat", handleClose)
+    const onToggle = (e) => setIsOpen(e.detail)
+    const onStorage = (e) => {
+      if (e.key === 'chatModalOpen') setIsOpen(e.newValue === 'true')
+    }
+
+    window.addEventListener('chat-modal-toggle', onToggle)
+    window.addEventListener('storage', onStorage)
+
+    // Initialize from localStorage on mount
+    setIsOpen(localStorage.getItem('chatModalOpen') === 'true')
 
     return () => {
-      window.removeEventListener("open-chat", handleOpen)
-      window.removeEventListener("close-chat", handleClose)
+      window.removeEventListener('chat-modal-toggle', onToggle)
+      window.removeEventListener('storage', onStorage)
     }
   }, [])
 
@@ -82,7 +99,7 @@ export default function ChatWrapper ({ username, avatar }) {
     <div className={`chat-wrapper shadow border-top border-left border-right ${visible}`}>
       <div className="chat-title-bar">
         Chat 
-        <span className="chat-title-bar-close" onClick={() => setIsOpen(false)}>
+        <span className="chat-title-bar-close" onClick={handleCloseBtn}>
           <i className="fas fa-times-circle"></i>
         </span>
       </div>

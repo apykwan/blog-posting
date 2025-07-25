@@ -90,7 +90,6 @@
     @auth
     <div 
       data-username="{{ Auth::user()->username }}"
-      data-avatar="{{ Auth::user()->avatar }}" 
       id="react-chat-wrapper" 
     >
       <div id="react-chat-root"></div>

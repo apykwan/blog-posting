@@ -14,9 +14,8 @@ if (chatBtn) createRoot(chatBtn).render(<ChatBtn />)
 const wrapper = document.getElementById("react-chat-wrapper")
 if (wrapper) {
   const username = wrapper.dataset.username
-  const avatar = wrapper.dataset.avatar
 
   createRoot(document.getElementById("react-chat-root")).render(
-    <ChatWrapper username={username} avatar={avatar} />
+    <ChatWrapper username={username} />
   );
 }
