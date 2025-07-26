@@ -17,7 +17,7 @@
 
     <p class="text-muted small mb-4">
       <a href="#"><img class="avatar-tiny" src="{{$post->user->avatar}}" /></a>
-      Posted by <a href="#">{{ $post->user->username }}</a> {{ $post->created_at }}
+      Posted by <a href="/profile/{{$post->user->username}}">{{ $post->user->username }}</a> {{ $post->created_at }}
     </p>
 
     <div class="body-content">

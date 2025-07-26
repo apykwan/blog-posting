@@ -5,20 +5,22 @@
       
       @auth
       @if(!$sharedData['currentlyFollowing'] AND Auth::user()->username !== $sharedData['username'])
-      <form class="ml-2 d-inline" action="/create-follow/{{$sharedData['username']}}" method="POST">
+      <livewire:addfollow :username="$sharedData['username']" />
+      {{-- <form class="ml-2 d-inline" action="/create-follow/{{$sharedData['username']}}" method="POST">
         @csrf
         <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
-      </form>
+      </form> --}}
       @endif
 
       @if($sharedData['currentlyFollowing'])
-      <form class="ml-2 d-inline" action="/remove-follow/{{$sharedData['username']}}" method="POST">
+      <livewire:removefollow :username="$sharedData['username']" />
+      {{-- <form class="ml-2 d-inline" action="/remove-follow/{{$sharedData['username']}}" method="POST">
         @csrf
         <button class="btn btn-danger btn-sm">Stop Following <i class="fas fa-user-times"></i></button>
         @if(Auth::user()->username == $sharedData['username'])
         <a href="/manage-avatar" class="btn btn-secondary btn-sm">Manage Avatar</a>
         @endif
-      </form>
+      </form> --}}
       @endif
      
       @if(Auth::user()->username == $sharedData['username'])

@@ -1,6 +1,7 @@
 <x-layout doctitle="Editing: {{$post->title}}">
   <div class="container py-md-5 container--narrow">
-    <form action="/post/{{$post->id}}" method="POST">
+    <livewire:editpost :post="$post">
+    {{-- <form action="/post/{{$post->id}}" method="POST">
       <p><small><strong><a href="/post/{{$post->id}}">&laquo; Back to post permalink</a></strong></small></p>
       @csrf
       @method('PUT')
@@ -21,6 +22,6 @@
       </div>
 
       <button class="btn btn-primary">Save Changes</button>
-    </form>
+    </form> --}}
   </div>
 </x-layout>

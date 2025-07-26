@@ -1,4 +1,4 @@
-<form wire:submit="delete" class="delete-post-form d-inline" action="/post/{{$post->id}}" method="POST">
+<form wire:submit="delete" class="delete-post-form d-inline">
     @csrf
     @method('DELETE')
     <button 
