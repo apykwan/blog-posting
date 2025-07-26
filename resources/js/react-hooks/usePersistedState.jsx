@@ -3,13 +3,13 @@ import { useState, useEffect } from "react"
 export default function usePersistedState(key, initialValue) {
   // Initialize state from localStorage (if exists) or fallback to initialValue
   const [state, setState] = useState(() => {
-      try {
-        const stored = localStorage.getItem(key)
-        return stored !== null ? JSON.parse(stored) : initialValue
-      } catch (err) {
-        console.error("Failed to read localStorage:", err)
-        return initialValue
-      }
+    try {
+      const stored = localStorage.getItem(key)
+      return stored !== null ? JSON.parse(stored) : initialValue
+    } catch (err) {
+      console.error("Failed to read localStorage:", err)
+      return initialValue
+    }
   })
 
   // Sync any state changes to localStorage

@@ -1,5 +1,5 @@
 <div>
-    <form wire:submit="create" action="/create-post" method="POST">
+    <form wire:submit="create">
         @csrf
         <div class="form-group">
             <label for="post-title" class="text-muted mb-1"><small>Title</small></label>

@@ -30,9 +30,9 @@ Route::post('/create-follow/{user:username}', [FollowController::class, 'createF
 Route::post('/remove-follow/{user:username}', [FollowController::class, 'deleteFollow'])->middleware('mustBeLoggedIn');
 
 Route::get('/create-post', [PostController::class, 'showCreateForm'])->middleware('mustBeLoggedIn');
-Route::post('/create-post', [PostController::class, 'storeNewPost'])->middleware('mustBeLoggedIn');
+// Route::post('/create-post', [PostController::class, 'storeNewPost'])->middleware('mustBeLoggedIn');
 Route::get('/post/{post}', [PostController::class, 'viewSinglePost']);
-Route::delete('/post/{post}', [PostController::class, 'delete'])->middleware('can:delete,post');
+// Route::delete('/post/{post}', [PostController::class, 'delete'])->middleware('can:delete,post');
 Route::get('/post/{post}/edit', [PostController::class, 'showEditForm'])->middleware('can:update,post');
 Route::put('/post/{post}', [PostController::class, 'actuallyUpdate'])->middleware('can:update,post');
 Route::get('/search/{term}', [PostController::class, 'search']);
