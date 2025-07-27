@@ -1,10 +1,9 @@
 import { Schema, model } from 'mongoose'
 
 const chatSchema = new Schema({
-  user: {
-    type: Schema.Types.ObjectId,
-    required: true,
-    ref: 'User'
+  userId: {
+    type: Number,
+    required: true
   },
   textvalue: {
     type: String,

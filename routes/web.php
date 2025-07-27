@@ -52,8 +52,9 @@ Route::post('/send-chat-message', function (Request $request) {
 
   try {
     $data = [
-      "avatar" => Auth::user()->avatar,
+      "userId" => Auth::user()->id,
       "username" => Auth::user()->username,
+      'avatar' => Auth::user()->avatar,
       "textvalue" => $formFields['textvalue']
     ];
 

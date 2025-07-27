@@ -6,7 +6,6 @@ use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -137,13 +136,6 @@ class UserController extends Controller
 
             $user->avatar = $filename;
             $user->save();
-
-            // updating avatar filename on MongoDB
-            $parts = explode('/', $user->avatar);
-            $avatarFileName = end($parts);
-            Http::put('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/update-mongodb-user/' . $user->username, [
-                'avatar' => $avatarFileName,
-            ]);
 
             if ($oldAvatar && $oldAvatar != '/fallback-avatar.jpg') {
                 $relativePath = str_replace(asset('storage/'), '', $oldAvatar);

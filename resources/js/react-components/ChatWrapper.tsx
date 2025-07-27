@@ -16,6 +16,7 @@ export default function ChatWrapper ({ username }) {
   const handleChange = (e) => setInput(e.target.value)
   const handleSubmit = async (e) => {
     e.preventDefault()
+
     if (socketRef.current) {
       await axios.post('http://localhost:8000/send-chat-message', {
         textvalue: input
@@ -28,6 +29,8 @@ export default function ChatWrapper ({ username }) {
   const handleCloseBtn = () => setIsOpen(false)
 
   const displayMessageFromServer = (data) => {
+    if (!data.username || !data.avatar) return
+
     return data.username === username ? 
       (
         <div className="chat-self">
@@ -82,6 +85,8 @@ export default function ChatWrapper ({ username }) {
     socketRef.current = io(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}`)  
 
     socketRef.current.on('chatMessage', (data) => {
+      console.log('emit', data)
+      if (!data.username || !data.avatar) return
       setMessages(prev => [...prev, data])
     })
 

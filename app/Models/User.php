@@ -47,21 +47,6 @@ class User extends Authenticatable
         ];
     }
 
-    protected static function booted()
-    {
-        static::created(function ($user) {
-            try {
-                Http::timeout(5)->post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/create-mongodb-user', [
-                    'sql_id' => $user->id,
-                    'username' => $user->username,
-                    'avatar' => 'fallback-avatar.jpg',
-                ]);
-            } catch (\Exception $e) {
-                \Log::error('Failed to create MongoDB user: ' . $e->getMessage());
-            }
-        });
-    }
-
     public function feedPosts()
     {
         return $this->hasManyThrough(Post::class, Follow::class, 'user_id', 'user_id', 'id', 'followeduser');
