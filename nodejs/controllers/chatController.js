@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import Chat from '../models/chat.js'
 import User from '../models/user.js'
 import { emitIo } from '../socketIo.js'
+import {  mysqlDb } from '../database/mysql.js'
 
 export async function createChat (req, res, next) {
     const data = req.body
@@ -41,6 +42,10 @@ export async function getChats(req, res) {
       .populate('user', 'username avatar -_id')
       .lean();
 
+
+    const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users')
+    
+    console.log('all users: ', userRows)
     const flattenedChats = chats.map(chat => {
       const { user, ...rest } = chat;
       const avatar =

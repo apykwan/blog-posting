@@ -2,7 +2,8 @@ import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
 
-import mongoDB from './mongoDB/mongoDB.js'
+import mongoDB from './database/mongoDB.js'
+import { testMySQLConnection } from './database/mysql.js'
 import { initiateIo } from './socketIo.js'
 import chat from './routes/chat.js'
 import user from './routes/user.js'
@@ -13,9 +14,15 @@ app.use(cors({ origin: '*' }))
 app.use(express.json())
 
 const server = app.listen(process.env.NODE_SERVER_PORT, async () => {
-  await mongoDB()
-  console.log(`listening to port ${process.env.NODE_SERVER_PORT}`)
-})
+  try {
+    await mongoDB();
+    await testMySQLConnection();
+    console.log(`Listening on port ${process.env.NODE_SERVER_PORT}`);
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1); 
+  }
+});
 
 // Initiate SocketIo
 initiateIo(server)
