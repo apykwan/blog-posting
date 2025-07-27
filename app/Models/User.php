@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Facades\Http;
 
 class User extends Authenticatable
 {
@@ -47,6 +47,21 @@ class User extends Authenticatable
         ];
     }
 
+    protected static function booted()
+    {
+        static::created(function ($user) {
+            try {
+                Http::timeout(5)->post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/create-mongodb-user', [
+                    'sql_id' => $user->id,
+                    'username' => $user->username,
+                    'avatar' => 'fallback-avatar.jpg',
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Failed to create MongoDB user: ' . $e->getMessage());
+            }
+        });
+    }
+
     public function feedPosts()
     {
         return $this->hasManyThrough(Post::class, Follow::class, 'user_id', 'user_id', 'id', 'followeduser');
@@ -55,7 +70,7 @@ class User extends Authenticatable
     protected function avatar(): Attribute
     {
         return Attribute::make(get: function($value) {
-            return $value ? asset('storage/avatars/' . $value) : asset('/falin plback-avatar.jpg');
+            return $value ? asset('storage/avatars/' . $value) : asset('/fallback-avatar.jpg');
         });
     }
 

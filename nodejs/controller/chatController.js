@@ -1,17 +1,22 @@
+import mongoose from 'mongoose'
+
 import Chat from '../models/chat.js'
+import User from '../models/user.js'
 import { emitIo } from '../socketIo.js'
 
-export async function createChat (req, res) {
+export async function createChat (req, res, next) {
     const data = req.body
   if (
     typeof data.username === 'string' && data.username.trim() !== '' &&
-    typeof data.avatar === 'string' && data.avatar.trim() !== '' &&
     typeof data.textvalue === 'string' && data.textvalue.trim() !== ''
   ) {
     try {
+      const user = await User.findOne({ username: data.username }).exec()
+
+      if (!user) next(new Error('User not found.'))
+
       await Chat.create({
-        username: data.username,
-        avatar: data.avatar,
+        user: new mongoose.Types.ObjectId(user._id),
         textvalue: data.textvalue
       })
 
@@ -27,17 +32,34 @@ export async function createChat (req, res) {
   return res.status(400).json({ status: 'Invalid data' })
 }
 
-export async function getChats (req, res) {
+export async function getChats(req, res) {
   try {
-    const chat = await Chat.find()
+    const chats = await Chat.find()
       .sort({ created_at: -1 })
       .limit(25)
       .select({ _id: 0, __v: 0 })
+      .populate('user', 'username avatar -_id')
       .lean();
 
-    return res.json(chat.reverse())
+    const flattenedChats = chats.map(chat => {
+      const { user, ...rest } = chat;
+      const avatar =
+        user?.avatar?.startsWith('http') || user?.avatar?.startsWith('/')
+          ? user.avatar
+          : `/storage/avatars/${user?.avatar}`;
+
+      return {
+        ...rest,
+        username: user?.username,
+        avatar
+      };
+    });
+
+    console.log('data', flattenedChats);
+
+    return res.json(flattenedChats.reverse());
   } catch (err) {
-    console.error('Failed to save chat:', err)
-    return res.status(500).json({ error: 'Failed to save chat message' })
+    console.error('Failed to save chat:', err);
+    return res.status(500).json({ error: 'Failed to save chat message' });
   }
 }

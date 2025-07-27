@@ -38,7 +38,9 @@ export default function ChatWrapper ({ username }) {
         </div>
       ) : (
         <div className="chat-other">
-          <a href={`/profile/${data.username}`}><img className="avatar-tiny" src={data.avatar} /></a>
+          <a href={`/profile/${data.username}`}>
+            <img className="avatar-tiny" src={data.avatar} />
+          </a>
           <div className="chat-message">
             <div className="chat-message-inner">
               <a href={`/profile/${data.username}`}><strong>{data.username}:</strong></a>

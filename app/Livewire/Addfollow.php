@@ -9,7 +9,7 @@ use App\Models\{Follow, User};
 class Addfollow extends Component
 {
     public $username;
-    
+
     public function save()
     {
         if (!Auth::check()) {
@@ -37,7 +37,7 @@ class Addfollow extends Component
         $newFollow->followeduser = $user->id;
         $newFollow->save();
 
-        session()->flash('Success', 'User successfully followed.');
+        session()->flash('success', 'User successfully followed.');
         return $this->redirect("/profile/{$this->username}", navigate: true);
     }
 
