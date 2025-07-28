@@ -1,11 +1,30 @@
 <?php
 
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Request;
 use App\Http\Controllers\{UserController, PostController, FollowController};
 use Illuminate\Support\Facades\Log;
+
+// For testing purposes
+Route::get('/redis-check-set', function () {
+  Redis::select(0);
+  $members = Redis::smembers('users');
+  return response()->json($members);
+});
+
+Route::get('/redis-keys', function () {
+  Redis::select(0);
+  $keys = Redis::keys('*');
+  return response()->json($keys);
+});
+
+Route::get('/redis-test-info', function () {
+  $info = Redis::info();
+  return response()->json($info);
+});
 
 Route::get('/debug-session', function () {
   return [

@@ -1,6 +1,7 @@
 import Chat from '../models/chat.js'
-import { emitIo } from '../socketIo.js'
-import {  mysqlDb } from '../databases/mysql.js'
+import { emitIo } from '../utils/socketIo.js'
+import { mysqlDb } from '../databases/mysql.js'
+import { cacheUsers, getCachedUsers, isCachedUsersEmpty } from '../utils/redisCache.js'
 
 export async function createChat (req, res, next) {
   const data = req.body
@@ -34,11 +35,17 @@ export async function createChat (req, res, next) {
 
 export async function getChats(req, res) {
   try {
-    const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users')
-    if (userRows.length === 0) return res.json([])
+    if (await isCachedUsersEmpty()) {
+      const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users')
+      if (userRows.length === 0) return res.json([])
+
+      await cacheUsers(userRows)
+    } 
+      
+    const users = await getCachedUsers()
 
     const userHash = {}
-    userRows.forEach(user => {
+    users.forEach(user => {
       const avatar = user?.avatar?.startsWith('http') || user?.avatar?.startsWith('/')
         ? user.avatar
         : `/storage/avatars/${user?.avatar}`

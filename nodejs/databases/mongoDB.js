@@ -5,7 +5,7 @@ export default async function () {
 
   try {
       await mongoose.connect(process.env.MONGODB_URL)
-      console.log("Connected to mongoDB database")
+      console.log("Connected to mongoDB on NodeJs")
   } catch (err) {
       console.log(`DB connection Error: `, err)
   }

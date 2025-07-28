@@ -21,7 +21,7 @@ export async function testMySQLConnection() {
   try {
     // simple query to test
     const [rows] = await mysqlDb.query('SELECT 1') 
-    console.log('MySQL connected:', rows)
+    console.log('MySQL connected on NodeJs:', rows)
   } catch (err) {
     console.error('MySQL connection failed:', err)
     throw err

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
@@ -22,6 +23,7 @@ class UserController extends Controller
 
         return view('homepage');
     }
+
     public function register(Request $request) 
     {
         $incomingFields = $request->validate([
@@ -32,6 +34,13 @@ class UserController extends Controller
 
         $user = User::create($incomingFields);
         Auth::login($user);
+
+        // Create redis set
+        Redis::hmset("user:$user->id", [
+            'username' => $user->username,
+            'avatar' => 'fallback-avatar.jpg'
+        ]);
+        Redis::sadd('users', $user->id);
 
         return redirect('/')->with('success', 'Thank you for registering.');
     }
@@ -141,6 +150,11 @@ class UserController extends Controller
                 $relativePath = str_replace(asset('storage/'), '', $oldAvatar);
                 Storage::disk('public')->delete($relativePath);
             }
+
+            // Update Redis HSET if exists
+            if (Redis::exists("user:$user->id")) {
+                Redis::hset("user:$user->id", 'avatar', $filename);
+            } 
 
             return redirect('/profile/john')->with('success', 'Avatar updated.');
         }
