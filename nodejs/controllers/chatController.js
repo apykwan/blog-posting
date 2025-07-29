@@ -1,6 +1,7 @@
 import Chat from '../models/chat.js'
 import { emitIo } from '../utils/socketIo.js'
 import { mysqlDb } from '../databases/mysql.js'
+import { isRedisActive } from '../databases/redis.js'
 import { cacheUsers, getCachedUsers, isCachedUsersEmpty } from '../utils/redisCache.js'
 
 export async function createChat (req, res, next) {
@@ -35,14 +36,26 @@ export async function createChat (req, res, next) {
 
 export async function getChats(req, res) {
   try {
-    if (await isCachedUsersEmpty()) {
-      const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users')
-      if (userRows.length === 0) return res.json([])
+    let users = []
+    if (isRedisActive) {
+      if (await isCachedUsersEmpty()) {
+        const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users');
+        if (userRows.length === 0) return res.json([]);
 
-      await cacheUsers(userRows)
-    } 
-      
-    const users = await getCachedUsers()
+        await cacheUsers(userRows);
+      }
+
+      // Always get users from cache after cache is confirmed non-empty
+      users = await getCachedUsers();
+
+    } else {
+      // Redis not active, fallback to DB
+      const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users');
+      if (userRows.length === 0) return res.json([]);
+      users = userRows;
+    }
+
+    console.log(isRedisActive, users)
 
     const userHash = {}
     users.forEach(user => {

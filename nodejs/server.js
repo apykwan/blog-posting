@@ -15,9 +15,16 @@ app.use(express.json())
 
 const server = app.listen(process.env.NODE_SERVER_PORT, async () => {
   try {
-    await mongoDB()
-    await testMySQLConnection()
-    await connectRedis()
+    await mongoDB()   
+    await testMySQLConnection()   
+
+    try {
+      await connectRedis()
+      console.log('Connected to Redis')
+    } catch (redisError) {
+      console.warn('Warning: Failed to connect to Redis:', redisError)
+    }
+
     console.log(`Listening on port ${process.env.NODE_SERVER_PORT}`)
   } catch (error) {
     console.error('Failed to start server:', error)
