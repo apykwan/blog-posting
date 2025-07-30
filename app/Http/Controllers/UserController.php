@@ -8,9 +8,10 @@ use Illuminate\Support\Facades\Redis;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use App\Models\{User, Follow};
+use App\Models\{User, Follow, Post};
 use App\Events\OurExampleEvent;
 
 class UserController extends Controller
@@ -21,7 +22,18 @@ class UserController extends Controller
             return view('homepage-feed', ['posts' => Auth::user()->feedPosts()->latest()->paginate(4)]);
         } 
 
-        return view('homepage');
+        // if (Cache::has('postCount')) {
+        //     $postCount = Cache::get('postCount');
+        // } else {
+        //     $postCount = Post::count();
+        //     Cache::put('postCount', $postCount, 60);
+        // }
+
+        $postCount = Cache::remember('postCount', 20, function () {
+            return Post::count();
+        });
+
+        return view('homepage', ['postCount' => $postCount]);
     }
 
     public function register(Request $request) 

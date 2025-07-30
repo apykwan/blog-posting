@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { io } from 'socket.io-client'
+import { twMerge } from 'tailwind-merge'
 
 import usePersistedState from '../react-hooks/usePersistedState';
 
@@ -103,8 +104,8 @@ export default function ChatWrapper ({ username }) {
     }
   }, [messages])
   return (
-    <div className={`chat-wrapper shadow border-top border-left border-right ${visible}`}>
-      <div className="chat-title-bar">
+    <div className={twMerge(`chat-wrapper shadow border-top border-left border-right ${visible}`, 'rounded-md')}>
+      <div className={twMerge("chat-title-bar", 'rounded-t-md')}>
         Chat 
         <span className="chat-title-bar-close" onClick={handleCloseBtn}>
           <i className="fas fa-times-circle"></i>

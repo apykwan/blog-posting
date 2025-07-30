@@ -1,5 +1,7 @@
 import { redisClient } from '../databases/redis.js'
+import { mysqlDb } from '../databases/mysql.js'
 
+// Redis helpers
 export async function cacheUsers(users) {
   if (users.length === 0) return
   for (const user of users) {
@@ -33,4 +35,11 @@ export async function getCachedUsers() {
 export async function isCachedUsersEmpty() {
   const members = await redisClient.sMembers('users')
   return members.length === 0
+}
+
+// MySQL helper
+export async function fetchUsersFromMySQL() {
+  const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users')
+
+  return userRows
 }

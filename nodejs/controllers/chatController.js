@@ -1,8 +1,7 @@
 import Chat from '../models/chat.js'
 import { emitIo } from '../utils/socketIo.js'
-import { mysqlDb } from '../databases/mysql.js'
 import { isRedisActive } from '../databases/redis.js'
-import { cacheUsers, getCachedUsers, isCachedUsersEmpty } from '../utils/redisCache.js'
+import { cacheUsers, getCachedUsers, isCachedUsersEmpty, fetchUsersFromMySQL } from '../utils/helpers.js'
 
 export async function createChat (req, res, next) {
   const data = req.body
@@ -27,35 +26,34 @@ export async function createChat (req, res, next) {
       return res.json({ status: 'Message broadcasted' })
     } catch (err) {
       console.error('Failed to save chat:', err)
-      return res.status(500).json({ error: 'Failed to save chat message' })
+      return next(new Error('Failed to save chat message'))
     }
   }
 
   return res.status(400).json({ status: 'Invalid data' })
 }
 
-export async function getChats(req, res) {
+export async function getChats(req, res, next) {
   try {
     let users = []
     if (isRedisActive) {
+      // If Redis cache is empty then fetch from MySQL
       if (await isCachedUsersEmpty()) {
-        const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users');
-        if (userRows.length === 0) return res.json([]);
+        const userRows = fetchUsersFromMySQL()
+        if (userRows.length === 0) return res.json([])
 
-        await cacheUsers(userRows);
+        await cacheUsers(userRows)
       }
 
-      // Always get users from cache after cache is confirmed non-empty
-      users = await getCachedUsers();
+      users = await getCachedUsers()
 
     } else {
-      // Redis not active, fallback to DB
-      const [userRows] = await mysqlDb.query('SELECT id, username, avatar FROM users');
-      if (userRows.length === 0) return res.json([]);
-      users = userRows;
+      // Redis not active, fallback to MySQL
+      const userRows = fetchUsersFromMySQL()
+      if (userRows.length === 0) return res.json([])
+        
+      users = userRows
     }
-
-    console.log(isRedisActive, users)
 
     const userHash = {}
     users.forEach(user => {
@@ -86,6 +84,6 @@ export async function getChats(req, res) {
     return res.json(chats.reverse())
   } catch (err) {
     console.error('Failed to save chat:', err);
-    return res.status(500).json({ error: 'Failed to save chat message' });
+    return next(new Error("Failed to fetch users' chats"))
   }
 }

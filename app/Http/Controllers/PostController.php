@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
-use App\Mail\NewPostEmail;
+use App\Jobs\SendNewPostEmail;
 
 class PostController extends Controller {
   public function search($term)
@@ -38,11 +37,12 @@ class PostController extends Controller {
     
     $newPost = Post::create($incomingFields);
 
-    Mail::to(Auth::user()->email)->send(new NewPostEmail([
+    dispatch(new SendNewPostEmail([
+      'sendTo' => Auth::user()-> email,
       'name' => Auth::user()->username,
       'title' => $newPost->title
     ]));
-
+    
     return redirect("/post/{$newPost->id}")->with('success', 'New post created!');
   }
 

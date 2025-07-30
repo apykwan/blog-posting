@@ -1,10 +1,12 @@
 <x-layout>
-
     <div class="container py-md-5">
       <div class="row align-items-center">
         <div class="col-lg-7 py-3 py-md-5">
           <h1 class="display-3">Remember Writing?</h1>
-          <p class="lead text-muted">Are you sick of short tweets and impersonal &ldquo;shared&rdquo; posts that are reminiscent of the late 90&rsquo;s email forwards? We believe getting back to actually writing is the key to enjoying the internet again.</p>
+          <p class="lead text-muted">
+            Are you sick of short tweets and impersonal &ldquo;shared&rdquo; posts that are reminiscent of the late 90&rsquo;s email forwards? We believe getting back to actually writing is the key to enjoying the internet again.
+            <span class="text-pink-500 font-bold">Our users have authored {{$postCount}} posts.</span>
+          </p>
         </div>
         <div class="col-lg-5 pl-lg-5 pb-3 py-lg-5">
           <form action="/register" method="POST" id="registration-form">
@@ -38,7 +40,7 @@
               <input name="password_confirmation" id="password-register-confirm" class="form-control" type="password" placeholder="Confirm password" />
             </div>
 
-            <button type="submit" class="py-3 mt-4 btn btn-lg btn-success btn-block">Sign up for OurApp</button>
+            <button type="submit" class="py-3 mt-4 btn btn-lg bg-pink-600 hover:bg-pink-700 text-white btn-block">Sign up for OurApp</button>
           </form>
         </div>
       </div>
