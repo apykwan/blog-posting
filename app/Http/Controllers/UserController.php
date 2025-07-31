@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\{User, Follow, Post};
 use App\Events\OurExampleEvent;
 
@@ -57,26 +58,6 @@ class UserController extends Controller
         return redirect('/')->with('success', 'Thank you for registering.');
     }
 
-    public function loginApi(Request $request)
-    {
-        $incomingFields = $request->validate([
-            'username' => 'required',
-            'password' => 'required'
-        ]);
-
-        if (Auth::attempt($incomingFields)) {
-            $user = User::where('username', $incomingFields['username'])->first();
-
-            if (!$user) {
-                return response()->json(['message' => 'User not found'], 404);
-            }
-
-            $token = $user->createToken('ourapptoken')->plainTextToken;
-
-            return response()->json(['token' => $token]);
-        }
-    }
-
     public function login(Request $request) 
     {
         $incomingFields = $request->validate([
@@ -103,10 +84,6 @@ class UserController extends Controller
 
     public function logout() {
         if (Auth::check()) {
-            event(new OurExampleEvent([
-                'username' => Auth::user()->username,
-                'action' => 'logout'
-            ]));
             Auth::logout();
         }
             
@@ -191,5 +168,52 @@ class UserController extends Controller
             return redirect('/profile/john')->with('success', 'Avatar updated.');
         }
         return redirect('/manage-avatar')->with('failure', 'Avatar update failed.');
+    }
+
+    public function loginApi(Request $request)
+    {
+        $incomingFields = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($incomingFields)) {
+            $user = User::where('username', $incomingFields['username'])->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $token = $user->createToken('ourapptoken')->plainTextToken;
+
+            return response()->json(['token' => $token]);
+        }
+    }
+
+    public function testJWTApi(Request $request)
+    {
+        $incomingFields = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($incomingFields)) {
+            $user = Auth::user();
+
+            $token = JWTAuth::fromUser($user);
+
+            return response()->json(['token' => $token]);
+        }
+
+        return response()->json(['message' => 'Invalid credentials'], 401);
+    }
+
+    public function testDecodeJWTApi() {
+        try {
+            $payload = JWTAuth::parseToken()->getPayload();
+            return response()->json($payload);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid or missing token'], 401);
+        }
     }
 }

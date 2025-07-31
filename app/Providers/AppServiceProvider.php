@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        View::composer('components.layout', function ($view) {
+            $user = Auth::user();
+            $token = $user ? JWTAuth::fromUser($user) : null;
+            $view->with('jwtToken', $token);
+        });
+
         Gate::define('visitAdminPages', function($user) {
             return $user->isAdmin === 1;
         });

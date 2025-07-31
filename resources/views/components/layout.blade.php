@@ -113,6 +113,9 @@
       $('[data-toggle="tooltip"]').tooltip()
 
       document.getElementById('year').textContent = new Date().getFullYear()
+      window.Laravel = {
+        jwtToken: @json($jwtToken)
+      }
     </script>
   </body>
 </html>

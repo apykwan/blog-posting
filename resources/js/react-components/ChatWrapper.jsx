@@ -5,6 +5,9 @@ import { twMerge } from 'tailwind-merge'
 
 import usePersistedState from '../react-hooks/usePersistedState';
 
+axios.defaults.headers.common['Authorization'] = `Bearer ${window?.Laravel.jwtToken}`
+
+
 export default function ChatWrapper ({ username }) {
   const [isOpen, setIsOpen] = usePersistedState('chatModalOpen', false);
   const [messages, setMessages] = useState([]) 
@@ -57,7 +60,7 @@ export default function ChatWrapper ({ username }) {
 
   useEffect(() => {
     async function fetchMessages() {
-      const { data } = await axios(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}/api/get-chat-messages`)
+      const { data } = await axios(`http://localhost:8000/api/get-chat-messages`)
        setMessages(data);
     }
 
@@ -105,7 +108,7 @@ export default function ChatWrapper ({ username }) {
   }, [messages])
   return (
     <div className={twMerge(`chat-wrapper shadow border-top border-left border-right ${visible}`, 'rounded-md')}>
-      <div className={twMerge("chat-title-bar", 'rounded-t-md')}>
+      <div className={twMerge("chat-title-bar", 'rounded-t-md bg-linear-to-r from-pink-800 to-pink-600 uppercase font-bold')}>
         Chat 
         <span className="chat-title-bar-close" onClick={handleCloseBtn}>
           <i className="fas fa-times-circle"></i>
