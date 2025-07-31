@@ -1,5 +1,5 @@
 <x-layout :doctitle="$post->title">
-  <div class="container py-md-5 container--narrow">
+  <div class="container py-md-5 container--narrow h-[80vh]">
     <div class="d-flex justify-content-between">
       @can('update', $post)
       <h2>{{ $post->title }}</h2>

@@ -1,14 +1,15 @@
 <x-layout :doctitle="$doctitle">
-  <div class="container py-md-5 container--narrow">
+  <div class="container py-md-5 container--narrow h-[80vh]">
     <h2>
-      <img class="avatar-small" src="{{$sharedData['avatar']}}" /> {{strtoupper($sharedData['username'])}}
+      <img class="avatar-small shadow-md" src="{{$sharedData['avatar']}}" /> 
+      <span class="text-pink-600">{{strtoupper($sharedData['username'])}}</span>
       
       @auth
       @if(!$sharedData['currentlyFollowing'] AND Auth::user()->username !== $sharedData['username'])
       {{-- <livewire:addfollow :username="$sharedData['username']" /> --}}
       <form class="ml-2 d-inline" action="/create-follow/{{$sharedData['username']}}" method="POST">
         @csrf
-        <button class="btn btn-primary btn-sm">Follow <i class="fas fa-user-plus"></i></button>
+        <button class="btn btn-info btn-sm">Follow <i class="fas fa-user-plus"></i></button>
       </form>
       @endif
 

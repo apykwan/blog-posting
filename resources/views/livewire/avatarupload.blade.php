@@ -7,6 +7,6 @@
             <p class="alert small alert-danger shadow-sm">{{ $message }}</p>
             @enderror
         </div>
-        <button wire:loading.attr="disabled" wire:target="avatar" class="btn btn-primary">Save</button>
+        <button wire:loading.attr="disabled" wire:target="avatar" class="btn btn-info">Save</button>
     </form>
 </div>

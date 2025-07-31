@@ -25,7 +25,9 @@
   <body>
     <header class="mb-3  bg-linear-to-t from-pink-500 to-pink-700">
       <div class="container d-flex flex-column flex-md-row align-items-center p-3">
-        <h4 class="my-0 mr-md-auto font-weight-normal"><a href="/" class="text-white">Lara Post</a></h4>
+        <h4 class="my-0 mr-md-auto font-weight-normal">
+          <a href="/" class="text-white hover:text-gray-200! hover:no-underline! font-bold uppercase">Lara Post</a>
+        </h4>
 
         @auth
         <div class="d-flex flex-row flex-nowrap align-items-center gap-2">
@@ -39,10 +41,10 @@
           <a href="/profile/{{Auth::user()->username}}" class="mr-2">
             <img title="My Profile" data-toggle="tooltip" data-placement="bottom" style="width: 32px; height: 32px; border-radius: 16px" src="{{Auth::user()->avatar}}" />
           </a>
-          <a href="/create-post" class="btn btn-sm btn-success mr-2">Create Post</a>
+          <a href="/create-post" class="btn btn-sm btn-light text-pink-600! font-bold! mr-2">Create Post</a>
           <form action="/logout" method="POST" class="d-inline">
             @csrf
-            <button class="btn btn-sm btn-secondary">Sign Out</button>
+            <button class="btn btn-sm btn-dark">Sign Out</button>
           </form>
         </div>
         @else
@@ -56,7 +58,7 @@
               <input name="loginpassword" class="form-control form-control-sm input-dark" type="password" placeholder="Password" />
             </div>
             <div class="col-md-auto">
-              <button class="btn btn-primary btn-sm">Sign In</button>
+              <button class="btn btn-info btn-sm">Sign In</button>
             </div>
           </div>
         </form>

@@ -60,7 +60,7 @@ Route::get('/profile/{user:username}', [UserController::class, 'profile']);
 Route::get('/profile/{user:username}/followers', [UserController::class, 'profileFollowers']);
 Route::get('/profile/{user:username}/following', [UserController::class, 'profileFollowing']);
 
-Route::post('/send-chat-message', function (Request $request) {
+Route::post('/api/send-chat-message', function (Request $request) {
   $formFields = $request->validate([
     'textvalue' => ['required', 'string']
   ]);
@@ -77,7 +77,7 @@ Route::post('/send-chat-message', function (Request $request) {
       "textvalue" => $formFields['textvalue']
     ];
 
-    $response = Http::post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/send-chat-message', $data);
+    $response = Http::post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/send-chat-message', $data);
 
     if ($response->failed()) {
       Log::error('Failed to send message to socket server:', ['error' => $response->json()]);

@@ -10,7 +10,7 @@
         <p class="alert small alert-danger shadow-sm">{{ $message }}</p>
         @enderror
       </div>
-      <button class="btn btn-primary">Save</button>
+      <button class="btn btn-info">Save</button>
     </form>
   </div>
 </x-layout>

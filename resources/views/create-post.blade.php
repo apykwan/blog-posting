@@ -1,5 +1,5 @@
 <x-layout doctitle="Create New Post">
-  <div class="container py-md-5 container--narrow">
+  <div class="container py-md-5 container--narrow h-[80vh]">
     {{-- <livewire:createpost /> --}}
     <form action="/create-post" method="POST">
       @csrf
@@ -19,7 +19,7 @@
         @enderror
       </div>
 
-      <button class="btn btn-primary">Save New Post</button>
+      <button class="btn btn-info">Save New Post</button>
     </form>
   </div>
 </x-layout>

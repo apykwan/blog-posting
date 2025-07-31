@@ -1,5 +1,5 @@
 <x-layout doctitle="Editing: {{$post->title}}">
-  <div class="container py-md-5 container--narrow">
+  <div class="container py-md-5 container--narrow h-[80vh]">
     {{-- <livewire:editpost :post="$post"> --}}
     <form action="/post/{{$post->id}}" method="POST">
       <p><small><strong><a href="/post/{{$post->id}}">&laquo; Back to post permalink</a></strong></small></p>
@@ -21,7 +21,7 @@
         @enderror
       </div>
 
-      <button class="btn btn-primary">Save Changes</button>
+      <button class="btn btn-info">Save Changes</button>
     </form>
   </div>
 </x-layout>

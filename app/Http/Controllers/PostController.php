@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Auth\Access\AuthorizationException;
 use App\Models\Post;
 use App\Jobs\SendNewPostEmail;
 
@@ -74,11 +76,46 @@ class PostController extends Controller {
 
   public function delete(Post $post)
   {
-    if(!Auth::user()->can('delete', $post)) {
-      return 'You cannot do that';
+    $post->delete();
+    return redirect('/profile/' . Auth::user()->username)->with('success', 'Post successfully deleted.');
+  }
+
+  public function storeNewPostApi(Request $request)
+  {
+    try {
+      $incomingFields = $request->validate([
+        'title' => 'required',
+        'body' => 'required'
+      ]);
+
+      $incomingFields['title'] = strip_tags($incomingFields['title']);
+      $incomingFields['body'] = strip_tags($incomingFields['body']);
+      $incomingFields['user_id'] = Auth::id(); // Possible point of failure
+
+      $newPost = Post::create($incomingFields); // Possible point of failure
+
+      dispatch(new SendNewPostEmail([
+        'sendTo' => Auth::user()->email,
+        'name' => Auth::user()->username,
+        'title' => $newPost->title
+      ]));
+
+      return response()->json(['postId' => $newPost->id]);
+    } catch (\Throwable $e) {
+      return response()->json([
+        'error' => $e->getMessage()
+      ], 500);
+    }
+  }
+
+  public function deleteApi(Post $post)
+  {
+    if (Gate::denies('deletePost', $post)) {
+      return response()->json(['message' => 'You are not authorized to delete this post.'], 403);
     }
 
     $post->delete();
-    return redirect('/profile/' . Auth::user()->username)->with('success', 'Post successfully deleted.');
+
+    return response()->json(['postId' => $post->id]);
   }
 }

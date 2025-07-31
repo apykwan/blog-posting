@@ -35,7 +35,7 @@ const server = app.listen(process.env.NODE_SERVER_PORT, async () => {
 // Initiate SocketIo
 initiateIo(server)
 
-app.use(chat)
+app.use('/api', chat)
 app.use((err, req, res, next) => {
   const statusCode = err.status || 500;
   return res.status(statusCode).json({ msg: err.message || 'Server error '});

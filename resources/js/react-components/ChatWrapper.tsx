@@ -19,7 +19,7 @@ export default function ChatWrapper ({ username }) {
     e.preventDefault()
 
     if (socketRef.current) {
-      await axios.post('http://localhost:8000/send-chat-message', {
+      await axios.post('http://localhost:8000/api/send-chat-message', {
         textvalue: input
       },  { withCredentials: true })
 
@@ -57,7 +57,7 @@ export default function ChatWrapper ({ username }) {
 
   useEffect(() => {
     async function fetchMessages() {
-      const { data } = await axios(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}/get-chat-messages`)
+      const { data } = await axios(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}/api/get-chat-messages`)
        setMessages(data);
     }
 

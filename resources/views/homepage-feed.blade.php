@@ -1,5 +1,5 @@
 <x-layout>
-  <div class="container py-md-5 container--narrow">
+  <div class="container py-md-5 container--narrow h-[80vh]">
     @unless($posts->isEmpty())
     <h2 class="text-center mb-4">The Latest From Those You Follow</h2>
     <div class="list-group">

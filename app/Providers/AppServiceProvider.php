@@ -25,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
             return $user->isAdmin === 1;
         });
 
+        Gate::define('deletePost', function ($user, $post) {
+            return $user->id === $post->user_id || $user->isAdmin;
+        });
+
         Paginator::useBootstrapFive();
     }
 }

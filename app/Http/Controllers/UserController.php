@@ -57,6 +57,26 @@ class UserController extends Controller
         return redirect('/')->with('success', 'Thank you for registering.');
     }
 
+    public function loginApi(Request $request)
+    {
+        $incomingFields = $request->validate([
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
+        if (Auth::attempt($incomingFields)) {
+            $user = User::where('username', $incomingFields['username'])->first();
+
+            if (!$user) {
+                return response()->json(['message' => 'User not found'], 404);
+            }
+
+            $token = $user->createToken('ourapptoken')->plainTextToken;
+
+            return response()->json(['token' => $token]);
+        }
+    }
+
     public function login(Request $request) 
     {
         $incomingFields = $request->validate([

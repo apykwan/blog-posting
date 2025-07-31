@@ -17,6 +17,6 @@
             @enderror
         </div>
 
-        <button class="btn btn-primary">Save New Post</button>
+        <button class="btn btn-info">Save New Post</button>
     </form>
 </div>
