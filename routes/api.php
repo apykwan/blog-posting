@@ -40,7 +40,14 @@ Route::post('/send-chat-message', function (Request $request) {
             "textvalue" => $formFields['textvalue']
         ];
 
-        $response = Http::post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/send-chat-message', $data);
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(["message" => "Invalid token"]);
+        }
+        
+        $response = Http::withToken($token)
+            ->post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/send-chat-message', $data);
 
         if ($response->failed()) {
             Log::error('Failed to send message to socket server:', ['error' => $response->json()]);
@@ -54,7 +61,14 @@ Route::post('/send-chat-message', function (Request $request) {
 
 Route::get('/get-chat-messages', function (Request $request) {
     try {
-        $response = Http::get('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/get-chat-messages');
+        $token = $request->bearerToken();
+
+        if (!$token) {
+            return response()->json(["message" => "Invalid token"]);
+        }
+
+        $response = Http::withToken($token)
+            ->get('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/get-chat-messages');
 
         return $response;
     } catch (\Exception $e) {

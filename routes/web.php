@@ -56,3 +56,7 @@ Route::get('/debug-session', function () {
 Route::get('/admin-only', function () {
   return 'Only admins should be to see this page';
 })->middleware('can:visitAdminPages');
+
+Route::get('/jwt', function() {
+  return Auth::user();
+});

@@ -43,3 +43,14 @@ export async function fetchUsersFromMySQL() {
 
   return userRows
 }
+
+export async function findUserById (id) {
+  const user = await redisClient.hGetAll(`user:${id}`)
+
+  if (Object.keys(user).length === 0) {
+    const [rows] = await mysqlDb.query('SELECT id FROM users WHERE id = ? LIMIT 1', [id])
+    if (rows.length === 0) return false
+  }
+
+  return true
+}
