@@ -87,6 +87,10 @@ export default function ChatWrapper ({ username }) {
 
   useEffect(() => {
     socketRef.current = io(`http://localhost:${import.meta.env.VITE_NODE_SERVER_PORT}`)  
+    // socketRef.current = io("/", {
+    //     path: "/socket/",
+    //     transports: ["websocket"],
+    // })
 
     socketRef.current.on('chatMessage', (data) => {
       console.log('emit', data)

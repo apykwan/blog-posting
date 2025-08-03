@@ -7,22 +7,23 @@ export async function createChat (req, res, next) {
   const data = req.body
 
   if (
-    data.userId &&
-    typeof data.username === 'string' && data.username.trim() !== '' &&
+    Object.keys(req.user).length > 0 &&
     typeof data.textvalue === 'string' && data.textvalue.trim() !== ''
   ) {
     try {
+      
       await Chat.create({
-        userId: Number(data.userId),
+        userId: Number(req.user.userId),
         textvalue: data.textvalue
       })
 
       // Broadcast to ALL clients including sender
       emitIo('chatMessage', {
-        avatar: data.avatar.trim(), 
-        username: data.username.trim(),
+        avatar: req.user.avatar.trim() || '', 
+        username: req.user.username.trim() || 'unknown',
         textvalue: data.textvalue.trim()
       })
+
       return res.json({ status: 'Message broadcasted' })
     } catch (err) {
       console.error('Failed to save chat:', err)

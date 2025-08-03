@@ -16,6 +16,8 @@ export async function isAuthenticated(req, res, next) {
     
     req.user = {
       userId: decoded.id,
+      avatar: userExists.avatar,
+      username: userExists.username,
       isAdmin: decoded.isAdmin === 1
     }
 

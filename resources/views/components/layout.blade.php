@@ -44,7 +44,7 @@
           <a href="/create-post" class="btn btn-sm btn-light text-pink-600! font-bold! mr-2">Create Post</a>
           <form action="/logout" method="POST" class="d-inline">
             @csrf
-            <button class="btn btn-sm btn-dark">Sign Out</button>
+            <button class="btn btn-sm btn-light text-teal-600! font-bold!">Sign Out</button>
           </form>
         </div>
         @else

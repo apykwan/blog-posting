@@ -3,8 +3,9 @@ import { Server } from 'socket.io'
 let io = null
 export function initiateIo(server) {
   io = new Server(server, {
+    // path: "/socket",
     cors: {
-      origin: 'http://localhost:8000',
+      origin: '*',
       methods: ['GET', 'POST'],
       allowedHeaders: ['content-type']
     }

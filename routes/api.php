@@ -5,19 +5,8 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PostController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// use App\Http\Controllers\UserController;
+// use App\Http\Controllers\PostController;
 
 Route::middleware('auth:jwt')->get('/user', function (Request $request) {
     return $request->user();
@@ -33,18 +22,13 @@ Route::post('/send-chat-message', function (Request $request) {
     }
 
     try {
-        $data = [
-            "userId" => Auth::user()->id,
-            "username" => Auth::user()->username,
-            'avatar' => Auth::user()->avatar,
-            "textvalue" => $formFields['textvalue']
-        ];
-
         $token = $request->bearerToken();
 
         if (!$token) {
             return response()->json(["message" => "Invalid token"]);
         }
+
+        $data = ["textvalue" => $formFields['textvalue']];
         
         $response = Http::withToken($token)
             ->post('http://localhost:' . env('NODE_SERVER_PORT', 5001) . '/api/send-chat-message', $data);

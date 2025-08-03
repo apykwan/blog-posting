@@ -44,6 +44,7 @@ export async function fetchUsersFromMySQL() {
   return userRows
 }
 
+// Middlewares helper
 export async function findUserById (id) {
   const user = await redisClient.hGetAll(`user:${id}`)
 
@@ -52,5 +53,5 @@ export async function findUserById (id) {
     if (rows.length === 0) return false
   }
 
-  return true
+  return user
 }

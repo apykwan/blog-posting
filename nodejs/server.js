@@ -1,3 +1,4 @@
+import http from 'http' 
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
@@ -10,10 +11,14 @@ import chat from './routes/chat.js'
 
 dotenv.config()
 const app = express()
+const server = http.createServer(app) 
 app.use(cors({ origin: '*' }))
 app.use(express.json())
 
-const server = app.listen(process.env.NODE_SERVER_PORT, async () => {
+// Initiate SocketIo
+initiateIo(server)
+
+server.listen(process.env.NODE_SERVER_PORT, async () => {
   try {
     await mongoDB()   
     await testMySQLConnection()   
@@ -31,9 +36,6 @@ const server = app.listen(process.env.NODE_SERVER_PORT, async () => {
     process.exit(1)
   }
 })
-
-// Initiate SocketIo
-initiateIo(server)
 
 app.use('/api', chat)
 app.use((err, req, res, next) => {

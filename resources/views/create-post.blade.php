@@ -19,7 +19,7 @@
         @enderror
       </div>
 
-      <button class="btn btn-info">Save New Post</button>
+      <button class="btn text-white bg-pink-700 hover:bg-pink-800">Save New Post</button>
     </form>
   </div>
 </x-layout>

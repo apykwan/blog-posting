@@ -6,8 +6,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\{UserController, PostController, FollowController};
 
 Route::get('/', [UserController::class, 'showCorrectHomepage'])->name('login');
-Route::post('/register', [UserController::class, 'register'])->name('guest');
-Route::post('/login', [UserController::class, 'login'])->name('guest');
+Route::post('/register', [UserController::class, 'register'])->middleware('guest');
+Route::post('/login', [UserController::class, 'login'])->middleware('guest');
 Route::post('/logout', [UserController::class, 'logout'])->middleware('mustBeLoggedIn');
 Route::get('/manage-avatar', [UserController::class, 'showAvatarForm'])->middleware('mustBeLoggedIn');
 Route::post('/manage-avatar', [UserController::class, 'storeAvatarForm'])->middleware('mustBeLoggedIn');
@@ -26,6 +26,12 @@ Route::get('/search/{term}', [PostController::class, 'search']);
 Route::get('/profile/{user:username}', [UserController::class, 'profile']);
 Route::get('/profile/{user:username}/followers', [UserController::class, 'profileFollowers']);
 Route::get('/profile/{user:username}/following', [UserController::class, 'profileFollowing']);
+
+Route::middleware('cache.headers:public;max_age=20;etag')->group(function() {
+  Route::get('/profile/{user:username}/raw', [UserController::class, 'profileRaw']);
+  Route::get('/profile/{user:username}/followers/raw', [UserController::class, 'profileFollowersRaw']);
+  Route::get('/profile/{user:username}/following/raw', [UserController::class, 'profileFollowingRaw']);
+});
 
 // For testing purposes
 Route::get('/redis-check-set', function () {
@@ -56,7 +62,3 @@ Route::get('/debug-session', function () {
 Route::get('/admin-only', function () {
   return 'Only admins should be to see this page';
 })->middleware('can:visitAdminPages');
-
-Route::get('/jwt', function() {
-  return Auth::user();
-});

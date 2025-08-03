@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  laravel:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - mysql
+      - redis
+    # env_file: .env
+    environment:
+      DB_HOST: mysql
+      DB_DATABASE: lara_post
+      DB_USERNAME: root
+      DB_PASSWORD: secret
+      REDIS_HOST: redis
+      MONGO_URI: mongodb://mongodb:27017/lara_post
+
+  node:
+    build:
+      context: ./nodejs
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./nodejs:/usr/src/app
+    depends_on:
+      - mysql
+      - redis
+      - mongodb
+    environment:
+      REDIS_HOST: redis
+      MONGO_URI: mongodb://mongodb:27017/lara_post
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: lara_post
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+
+  mongodb:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  dbdata:
+  mongodata:
+  redisdata:
